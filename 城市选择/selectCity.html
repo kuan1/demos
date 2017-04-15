@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		
+	</body>
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script type="text/javascript">
+		loadCitys($("body"));
+		function loadCitys(domObj){
+			$.ajax({
+				type:"get",
+				url:"citys.json",
+				async:true,
+				dataType:"json",
+				success:function(data){
+					console.log(data[0]);
+					domObj.children().remove();
+					var _provinces = $("<select>");
+					_provinces.attr("id","provinces");
+					var len = data.length;
+					for(var i = 0;i < len;i++){
+						var provinceName = data[i].name;
+						var _option = $("<option>").text(provinceName);
+						_provinces.append(_option);
+					};
+					domObj.append(_provinces);
+				}
+			});
+		}
+		$("body").on("click","#provinces",function(){
+			console.log($(this).children():Selection)
+			//loadCitys($("body"));
+		})
+	</script>
+</html>

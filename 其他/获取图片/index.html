@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			img{width:200px;}
+		</style>
+	</head>
+	<body>
+	</body>
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script type="text/javascript">
+		var $body = $("body");
+		$.getJSON("imgs.json").done(function(data){
+			console.log(data);
+			var len = data.length;
+			for(i = 0;i < len;i++){
+				var _img = $("<img src='img/" +  data[i] + "' />");
+				$body.append(_img);
+			}
+		})
+	</script>
+</html>
