@@ -4,36 +4,111 @@
 		<meta charset="UTF-8">
 		<title></title>
 	</head>
+
 	<body>
-		
+
 	</body>
 	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 	<script type="text/javascript">
+		//加载城市列表
 		loadCitys($("body"));
-		function loadCitys(domObj){
+		
+		$("body").on("change", "#provinces", function() {
+			var cityID = $(this).find("option:selected").index();
+			loadCitys($("body"),cityID,true);
+			//console.log(cityID)
+		});
+		
+		$("body").on("change", "#citys", function() {
+			var provID = $("#provinces").find("option:selected").index();
+			var cityID = $(this).find("option:selected").index();
+			
+			//console.log(provID,cityID)
+			getVillage(provID,cityID,$("body"));
+		});
+		
+		
+		function loadCitys(domObj,ID,flag) {
+			var a = ID;
+			//console.log(a)
+			$.ajax({
+				type: "get",
+				url: "citys.json",
+				async: true,
+				dataType: "json",
+				success: function(data) {
+					$("#villages").remove();
+					//console.log(0)
+					if(!flag){
+						var _provinces = $("<select>");
+					_provinces.attr("id", "provinces");
+					var _citys = $("<select>");
+					var len = data.length;
+					for(var i = 0; i < len; i++) {
+						var provinceName = data[i].name;
+						var _option = $("<option>").text(provinceName);
+						_provinces.append(_option);
+					};
+					//console.log(data[0].cities);
+					_provinces.attr("id", "provinces").appendTo(domObj);
+					}
+					
+					
+					var ID = a || 0;
+					
+					getCity(data,data[ID].name, $("body"));
+					getVillage(ID,0,$("body"))
+				}
+			});
+		}
+		
+		function getCity(data, thisCity, box) {
+			$("#citys").remove();
+			//console.log(data)
+			var len = data.length;
+			for(var i = 0; i < len; i++) {
+				if(data[i].name == thisCity) {
+					var cities = data[i].cities;
+					//console.log(cities)
+					var $select = $("<select>");
+					$select.attr("id","citys");
+					box.append($select);
+					$.each(cities, function() {
+						//var cities = this.cities;
+						//console.log(cities);
+						//console.log(this.name)
+						var $option = $("<option>");
+						$option.text(this.name)
+						$option.appendTo($select)
+					})
+				}
+			}
+		};
+		
+		function getVillage(id1,id2,domObj){
 			$.ajax({
 				type:"get",
 				url:"citys.json",
 				async:true,
 				dataType:"json",
 				success:function(data){
-					console.log(data[0]);
-					domObj.children().remove();
-					var _provinces = $("<select>");
-					_provinces.attr("id","provinces");
-					var len = data.length;
-					for(var i = 0;i < len;i++){
-						var provinceName = data[i].name;
-						var _option = $("<option>").text(provinceName);
-						_provinces.append(_option);
-					};
-					domObj.append(_provinces);
+					$("#villages").remove();
+					//console.log(data[id1].cities[id2].cities);
+					var data = data[id1].cities[id2].cities;
+					//console.log(data)
+					var $select = $("<select>");
+					$select.attr("id","villages");
+					domObj.append($select);
+					$.each(data, function(index) {
+						if(index != 0){
+							var $option = $("<option>");
+							$option.text(this.name);
+							$select.append($option)
+						};
+					});
 				}
-			});
+			})
 		}
-		$("body").on("click","#provinces",function(){
-			console.log($(this).children():Selection)
-			//loadCitys($("body"));
-		})
 	</script>
+
 </html>
